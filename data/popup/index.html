@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="index.css">
+  </head>
+
+  <body>
+    <div id="power-container">
+      <div id="power" tabindex="1"></div>
+    </div>
+    <div id="log"></div>
+    <div id="settings">
+      <table>
+        <tr>
+          <td>API Server</td>
+          <td><select id="server" type="args"></select></td>
+        </tr>
+        <tr>
+          <td>GET requests support</td>
+          <td><select id="get" type="args">
+            <option value="">All</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select></td>
+        </tr>
+        <tr>
+          <td>POST requests support</td>
+          <td><select id="post" type="args">
+            <option value="">All</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select></td>
+        </tr>
+        <tr>
+          <td>Cookies support</td>
+          <td><select id="cookies" type="args">
+            <option value="">All</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select></td>
+        </tr>
+        <tr>
+          <td>Referer header support</td>
+          <td><select id="referer" type="args">
+            <option value="">All</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select></td>
+        </tr>
+        <tr>
+          <td>User-agent header support</td>
+          <td><select id="user-agent" type="args">
+            <option value="">All</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select></td>
+        </tr>
+        <tr>
+          <td>HTTPS support</td>
+          <td><select id="supportsHttps" type="args">
+            <option value="">All</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select></td>
+        </tr>
+        <tr>
+          <td>Anonymity Level</td>
+          <td><select id="anonymityLevel" type="args">
+            <option value="">All</option>
+            <option value="1">anonymous</option>
+            <option value="0">not anonymous</option>
+          </select></td>
+        </tr>
+        <tr>
+          <td>Proxy Protocol</td>
+          <td><select id="protocol" type="args">
+            <option value="">All</option>
+            <option value="http">HTTP</option>
+            <option value="socks4">Socks4</option>
+            <option value="socks5">Socks5</option>
+          </select></td>
+        </tr>
+        <tr>
+          <td>Country</td>
+          <td><select id="country" type="args">
+            <option value="">All</option>
+            <option value="BR">Brazil (BR)</option>
+            <option value="US">United States (US)</option>
+            <option value="ID">Indonesia (ID)</option>
+            <option value="CN">China (CN)</option>
+            <option value="RU">Russia (RU)</option>
+            <option value="BD">Bangladesh (BD)</option>
+            <option value="IN">India (IN)</option>
+            <option value="TH">Thailand (TH)</option>
+            <option value="UA">Ukraine (UA)</option>
+            <option value="SG">Singapore (SG)</option>
+          </select></td>
+        </tr>
+      </table>
+    </div>
+    <p>
+      <a target="_blank" href="http://tools.add0n.com/what-is-my-ip.php">Check External IP</a> | <a target="_blank" href="https://ipleak.net/">Check DNS Leakage</a>
+    </p>
+    <script src="index.js"></script>
+  </body>
+</html>

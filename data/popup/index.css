@@ -1,0 +1,128 @@
+body {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  font-family: "Helvetica Neue",Helvetica,sans-serif;
+  font-size: 13px;
+  background-color: #fff;
+}
+body>div {
+  background-color: rgba(0, 0, 0, 0.03);
+  margin-bottom: 5px;
+}
+a {
+  text-decoration: none;
+}
+a:visited,
+a {
+  color: #000;
+}
+table {
+  width: 100%;
+}
+td:last-child {
+  text-align: right;
+}
+#power-container {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  width: 100%;
+  height: 190px;
+}
+#power {
+  background-image: url(power.svg);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 120px;
+  width: 150px;
+  height: 150px;
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: rgba(69, 153, 212, 1);
+  outline: none;
+}
+#power:active {
+  opacity: 0.5;
+}
+body[data-status=active] #power {
+  background-color: green;
+}
+body[data-status=not-available] #power {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: grayscale(100%);
+}
+body[data-status=searching] #power{
+  animation: searching 2s;
+  animation-iteration-count: infinite;
+}
+@keyframes searching {
+  0% {
+    filter: grayscale(100%);
+    opacity: 0.5;
+  }
+  25% {
+    filter: grayscale(50%);
+    opacity: 0.8;
+  }
+  50% {
+    filter: grayscale(0%);
+    opacity: 1;
+  }
+  75% {
+    filter: grayscale(50%);
+    opacity: 0.8;
+  }
+  100% {
+    filter: grayscale(100%);
+    opacity: 0.5;
+  }
+}
+
+
+#log {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 100px;
+  padding-top: 4px;
+}
+#log>span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 1px;
+  padding: 2px 5px;
+  color: #999;
+  font-size: 80%;
+  border-top: solid 1px #eeeeee;
+}
+#log>span:first-child {
+  border-top: none;
+}
+#log>span:last-child {
+  border-bottom: solid 1px #eeeeee;
+}
+#log>span.important {
+  background-color: #ffeeee;
+  color: #ff1518;
+  border-top-color: #ffd0d0;
+}
+#log>span.important + span {
+  border-top-color: #ffd0d0;
+}
+#log>span.important:last-child {
+  border-bottom: solid 1px #ffd0d0;
+}
+#log>span.warning {
+  background-color: #fffae1;
+  color: #757575;
+  border-top-color: #fff3ba;
+}
+#log>span.warning + span {
+  border-top-color: #fff3ba;
+}
+#log>span.warning:last-child {
+  border-bottom: solid 1px #fff3ba;
+}
