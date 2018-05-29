@@ -49,7 +49,7 @@ api.convert = json => {
 };
 
 api.ping = http => new Promise((resolve, reject) => {
-  const timer = setTimeout(reject, 10000, 'timeout');
+  const timer = setTimeout(reject, 15000, 'timeout');
   fetch(http, {
     method: 'GET'
   }).then(r => (r.ok ? r.text().then(resolve) : reject()), reject).finally(() => clearTimeout(timer));

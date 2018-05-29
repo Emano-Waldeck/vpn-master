@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "0.1.0",
+  "version": "0.1.2",
   "name": "VPN Master",
   "description": "A free reliable VPN solution based on HTTP, SOCKS4, and SOCKS5 proxy servers",
 
@@ -26,11 +26,12 @@
     "http://checkip.dyndns.org/"
   ],
 
-  "homepage_url": "http://add0n.com",
+  "homepage_url": "http://add0n.com/network-master.html",
 
   "background": {
     "persistent": false,
     "scripts": [
+      "firefox-proxy.js",
       "api.js",
       "vpn.js",
       "background.js"
@@ -49,5 +50,12 @@
       "64": "data/icons/disabled/64.png"
     },
     "default_popup": "data/popup/index.html"
+  },
+
+  "applications": {
+    "gecko": {
+      "id": "{57715155-28ba-4879-b332-cc4553b5803d}",
+      "strict_min_version": "58.0"
+    }
   }
 }
