@@ -11,17 +11,20 @@ api.fetch = (base, args = {}) => {
     url += '&protocol[]=socks4&protocol[]=socks5&protocol[]=http';
   }
   return fetch(url).then(r => r.json().then(j => {
-    if (j.error) {
+    if (r.status === 403 || r.status === 429 || r.status_code === 429) {
+      return Promise.reject(Error('Max limit reached'));
+    }
+    else if (j.error) {
       return Promise.reject(j.error);
     }
-    else if (r.status === 403) {
-      return Promise.reject('Max limit reached');
+    else if (j.status_message) {
+      return Promise.reject(j.status_message);
     }
     else if (r.ok) {
       return j;
     }
     else {
-      return Promise.reject('Cannot connect to the server');
+      return Promise.reject(Error('Cannot connect to the server'));
     }
   }));
 };
@@ -50,15 +53,27 @@ api.convert = json => {
 
 api.ping = http => new Promise((resolve, reject) => {
   const timer = setTimeout(reject, 15000, 'timeout');
+  const headers = new Headers();
+  headers.append('pragma', 'no-cache');
+  headers.append('cache-control', 'no-cache');
+
   fetch(http, {
-    method: 'GET'
-  }).then(r => (r.ok ? r.text().then(resolve) : reject()), reject).finally(() => clearTimeout(timer));
+    method: 'GET',
+    headers
+  }).then(r => (r.ok ? r.text().then(content => {
+    const ip = /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/
+      .exec(content) || /((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/.exec(content);
+    if (ip) {
+      resolve(ip[0]);
+    }
+    resolve(content);
+  }) : reject(Error('server error'))), reject).finally(() => clearTimeout(timer));
 });
 api.verify = proxy => new Promise((resolve, reject) => {
   const next = () => Promise.all([
     api.ping('http://checkip.dyndns.org/').then(resolve, () => false),
     api.ping('http://checkip.dyndns.org/').then(resolve, () => false)
-  ]).then(() => reject('Ping Failed'));
+  ]).then(() => reject(Error('Ping Failed')));
 
   if (proxy) {
     chrome.proxy.settings.set(proxy, next);

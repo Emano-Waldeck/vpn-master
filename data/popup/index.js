@@ -1,8 +1,8 @@
 'use strict';
 
-var power = document.getElementById('power');
+const power = document.getElementById('power');
 
-var log = (msg, c = '') => {
+const log = (msg, c = '') => {
   const span = document.createElement('span');
   span.title = span.textContent = msg;
   if (c) {
@@ -21,13 +21,14 @@ document.addEventListener('DOMContentLoaded', () => chrome.storage.local.get({
 }, prefs => {
   const select = document.getElementById('server');
   prefs.servers.forEach((server, index) => {
-    select.options[select.options.length] = new Option(
+    const option = new Option(
       (new URL(server)).hostname,
       index,
       Number(prefs.server) === index
     );
+    select.options[select.options.length] = option;
   });
-  select.value = prefs.server;
+  window.setTimeout(() => select.value = prefs.server, 100);
 }));
 {
   const args = [...document.querySelectorAll('[type=args]')].reduce((p, c) => {
@@ -56,7 +57,7 @@ chrome.proxy.settings.get({}, ({levelOfControl, value}) => {
     'system': 'System-wide Proxy',
     'auto_detect': 'Automatic Proxy',
     'pac_script': 'Controlled by a PAC Script'
-  }[value.mode] + '"');
+  }[value.mode || value.proxyType] + '"');
   if (value.mode === 'fixed_servers') {
     const http = value.rules.proxyForHttp;
     log(`Proxy for HTTP [${http.scheme}] ${http.host}:${[http.port]}`);
@@ -93,3 +94,5 @@ chrome.runtime.onMessage.addListener(request => {
     document.body.dataset.status = request.status;
   }
 });
+
+document.getElementById('faqs').href = chrome.runtime.getManifest().homepage_url;

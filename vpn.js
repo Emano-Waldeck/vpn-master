@@ -11,7 +11,7 @@ Object.defineProperty(vpn, 'status', {
     chrome.runtime.sendMessage({
       method: 'vpn.status',
       status: val
-    });
+    }, () => chrome.runtime.lastError);
     if (val === 'searching') {
       icon.search();
     }
@@ -50,7 +50,7 @@ vpn.proxy = {};
 vpn.proxy.clear = () => new Promise(resolve => chrome.proxy.settings.clear({}, resolve));
 vpn.proxy.set = proxy => new Promise(resolve => chrome.proxy.settings.set(proxy, resolve));
 
-vpn.api = async(server) => {
+vpn.api = async server => {
   const args = await vpn.storage({
     'get': '',
     'post': '',
@@ -67,22 +67,22 @@ vpn.api = async(server) => {
   const {proxy, info} = api.convert(j);
 
   log('Validating proxy server: [' + info.protocol.toUpperCase() + '] ' + info.ip + ':' + info.port);
-  const r = await api.verify(proxy);
+  const r = 'Reported IP address: ' + await api.verify(proxy);
   return r;
 };
 
-vpn.search = async(max = 4) => {
+vpn.search = async (max = 4) => {
   let i = 0;
 
   const prefs = await vpn.storage({
-    servers: [
+    'servers': [
       'https://gimmeproxy.com/api/getProxy',
       'https://api.getproxylist.com/proxy'
     ],
-    server: 0,
+    'server': 0,
     'validate-mode': 'direct'
   });
-  const once = async() => {
+  const once = async () => {
     log('Proxy mode is changed to ' + prefs['validate-mode']);
     if (prefs['validate-mode'] !== 'fixed_servers') {
       await vpn.proxy.set({
@@ -112,7 +112,7 @@ vpn.search = async(max = 4) => {
     catch (e) {
       if (vpn.status === 'searching') {
         log('API Server: ' + e, 'warning');
-        if (e === 'Max limit reached') {
+        if (e.message === 'Max limit reached') {
           prefs.server = (prefs.server + 1) % prefs.servers.length;
           log('Switching to ' + prefs.servers[prefs.server]);
         }
@@ -126,7 +126,7 @@ vpn.search = async(max = 4) => {
   return once();
 };
 
-vpn.stop = async() => {
+vpn.stop = async () => {
   await vpn.proxy.clear();
   vpn.status = 'disabled';
   log('VPN is disabled', 'warning');
