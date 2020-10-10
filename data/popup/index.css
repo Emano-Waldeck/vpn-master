@@ -2,19 +2,21 @@ body {
   display: flex;
   flex-direction: column;
   width: 400px;
-  font-family: "Helvetica Neue",Helvetica,sans-serif;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
   font-size: 12px;
+  color: #4d5156;
   background-color: #fff;
+  margin: 0;
+  overflow: hidden;
 }
-body>div {
-  background-color: rgba(0, 0, 0, 0.03);
+body > div {
   margin-bottom: 5px;
 }
 a {
   text-decoration: none;
 }
-a:visited,
-a {
+a,
+a:visited {
   color: #000;
 }
 table {
@@ -23,12 +25,17 @@ table {
 td:last-child {
   text-align: right;
 }
+select {
+  border: none;
+  background: #f8f8f8;
+  padding: 2px 5px;
+}
 #power-container {
   align-items: center;
   justify-content: center;
   display: flex;
   width: 100%;
-  height: 190px;
+  padding: 10px;
 }
 #power {
   background-image: url(start.png);
@@ -54,7 +61,7 @@ body[data-status=not-available] #power {
   pointer-events: none;
   filter: grayscale(100%);
 }
-body[data-status=searching] #power{
+body[data-status=searching] #power {
   animation: searching 2s;
   animation-iteration-count: infinite;
 }
@@ -81,48 +88,41 @@ body[data-status=searching] #power{
   }
 }
 
-
 #log {
   overflow-x: hidden;
   overflow-y: auto;
   height: 100px;
   padding-top: 4px;
+  background-color: #f8f8f8;
+  box-shadow: 0 0 0 5px #f8f8f8;
 }
-#log>span {
+#log > span {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   margin-bottom: 1px;
-  padding: 2px 5px;
-  color: #737373;
-  border-top: solid 1px #eeeeee;
+  padding: 3px 10px;
 }
-#log>span:first-child {
-  border-top: none;
+#log > span:not(:last-child) {
+  border-bottom: dotted 1px #ccc;
 }
-#log>span:last-child {
-  border-bottom: solid 1px #eeeeee;
+#log > span.important {
+  color: #ff4545;
+  background-color: #fee;
 }
-#log>span.important {
-  background-color: #ffeeee;
-  color: #ff1518;
-  border-top-color: #ffd0d0;
-}
-#log>span.important + span {
-  border-top-color: #ffd0d0;
-}
-#log>span.important:last-child {
-  border-bottom: solid 1px #ffd0d0;
-}
-#log>span.warning {
+#log > span.warning {
+  color: #776714;
   background-color: #fffae1;
-  color: #757575;
-  border-top-color: #fff3ba;
 }
-#log>span.warning + span {
-  border-top-color: #fff3ba;
+#settings {
+  margin-left: 10px;
+  margin-right: 10px;
 }
-#log>span.warning:last-child {
-  border-bottom: solid 1px #fff3ba;
+#tools {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  margin: 0;
+  background-color: #f8f8f8;
 }

@@ -73,6 +73,15 @@ chrome.proxy.settings.get({}, ({levelOfControl, value}) => {
   else {
     document.body.dataset.status = localStorage.getItem('vpn.status') || 'disabled';
     log('Welcome to VPN Master');
+    if (/Firefox/.test(navigator.userAgent)) {
+      chrome.extension.isAllowedIncognitoAccess(s => {
+        if (s === false) {
+          log('For this extension to be able to set proxies, enable "Run in Private Windows" option', 'important');
+        }
+      });
+    }
+
+
     chrome.runtime.getBackgroundPage(bg => {
       bg.log.cache.forEach(([m, c]) => log(m, c));
     });

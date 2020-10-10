@@ -1,7 +1,7 @@
 /* globals icon, log, api */
 'use strict';
 
-var vpn = {};
+const vpn = window.vpn = {};
 Object.defineProperty(vpn, 'status', {
   get() {
     return localStorage.getItem('vpn.status');
