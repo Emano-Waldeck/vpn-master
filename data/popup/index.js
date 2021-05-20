@@ -1,5 +1,6 @@
 'use strict';
 
+const isFirefox = /Firefox/.test(navigator.userAgent) || typeof InstallTrigger !== 'undefined';
 const power = document.getElementById('power');
 
 const log = (msg, c = '') => {
@@ -73,10 +74,10 @@ chrome.proxy.settings.get({}, ({levelOfControl, value}) => {
   else {
     document.body.dataset.status = localStorage.getItem('vpn.status') || 'disabled';
     log('Welcome to VPN Master');
-    if (/Firefox/.test(navigator.userAgent)) {
+    if (isFirefox) {
       chrome.extension.isAllowedIncognitoAccess(s => {
         if (s === false) {
-          log('For this extension to be able to set proxies, enable "Run in Private Windows" option', 'important');
+          log('Enable "Run in Private Windows" from Add-ons Manager and retry', 'important');
         }
       });
     }
