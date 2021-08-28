@@ -1,0 +1,155 @@
+:root {
+  --clc: #4d5156;
+  --gray: #f8f8f8;
+  --dark-gray: #c3c3c3;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 12px;
+  color: var(--clc);
+  background-color: #fff;
+  margin: 0;
+  overflow: hidden;
+}
+a {
+  text-decoration: none;
+}
+a,
+a:visited {
+  color: #000;
+}
+table {
+  width: 100%;
+}
+td:last-child {
+  text-align: right;
+}
+select {
+  border: none;
+  background: var(--gray);
+  padding: 2px 5px;
+  color: var(--clc);
+}
+#header {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+}
+#power-container {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  padding: 10px;
+}
+#power {
+  width: 120px;
+  height: 120px;
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: #b5d7ef;
+  outline: none;
+  position: relative;
+}
+#power::before {
+  content: 'Start';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#power:active {
+  opacity: 0.5;
+}
+body[data-status=active] #power {
+  background-color: #c5e0c5;
+}
+body[data-status=active] #power::before {
+  content: 'Stop';
+}
+body[data-status=not-available] #power {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: grayscale(100%);
+}
+body[data-status=searching] #power {
+  animation: searching 2s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes searching {
+  0% {
+    filter: grayscale(100%);
+    opacity: 0.5;
+  }
+  25% {
+    filter: grayscale(50%);
+    opacity: 0.8;
+  }
+  50% {
+    filter: grayscale(0%);
+    opacity: 1;
+  }
+  75% {
+    filter: grayscale(50%);
+    opacity: 0.8;
+  }
+  100% {
+    filter: grayscale(100%);
+    opacity: 0.5;
+  }
+}
+
+#log {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 200px;
+  border-left: solid 2px var(--gray);
+}
+#log > span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 7px 10px;
+}
+#log > span:nth-child(even) {
+  background-color: var(--gray);
+}
+#log > span.important {
+  color: #ff4545;
+  border-left: solid 5px #ff4545;
+  text-indent: -5px;
+}
+#log > span.warning {
+  color: #776714;
+  border-left: solid 5px #ffe565;
+  text-indent: -5px;
+}
+#settings {
+  margin: 10px 0 10px 10px;
+}
+#tools {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background-color: var(--gray);
+  margin: 0;
+}
+#tools > * {
+  width: 100%;
+  text-align: center;
+  padding: 12px;
+  position: relative;
+  box-sizing: border-box;
+}
+#tools > *:not(:last-child)::after {
+  content: '|';
+  position: absolute;
+  right: 0;
+  color: var(--dark-gray);
+}

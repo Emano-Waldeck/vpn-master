@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "version": "0.2.0",
+  "name": "VPN Master - Free HTTP and SOCKS Proxies",
+  "description": "__MSG_description__",
+  "default_locale": "en",
+  "icons": {
+    "16": "data/icons/16.png",
+    "32": "data/icons/32.png",
+    "48": "data/icons/48.png",
+    "64": "data/icons/64.png",
+    "128": "data/icons/128.png",
+    "256": "data/icons/256.png",
+    "512": "data/icons/512.png"
+  },
+  "permissions": [
+    "storage",
+    "proxy"
+  ],
+  "host_permissions": [
+    "https://gimmeproxy.com/api/getProxy",
+    "https://api.getproxylist.com/proxy",
+    "http://checkip.dyndns.org/"
+  ],
+  "homepage_url": "https://add0n.com/network-master.html",
+  "background": {
+    "service_worker": "worker.js"
+  },
+  "action": {
+    "default_popup": "data/popup/index.html"
+  },
+  "commands": {
+    "_execute_action": {
+      "description": "Press the action button"
+    }
+  }
+}
