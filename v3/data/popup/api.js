@@ -3,18 +3,71 @@
 const api = {};
 
 api.fetch = (base, args = {}) => {
-  let url = base + '?' + Object.entries(args)
-    .filter(([k, v]) => v)
-    .map(([k, v]) => `${k}=${v}`)
-    .join('&');
-  if (!args.protocol) {
-    url += '&protocol[]=socks4&protocol[]=socks5&protocol[]=http';
-  }
-  return fetch(url).then(r => r.json().then(j => {
+  const url = base + '?' + Object.entries(args).filter(([, v]) => v)
+    .map(([k, v]) => `${k}=${decodeURIComponent(v)}`).join('&');
+  return fetch(url).then(async r => {
     if (r.status === 403 || r.status === 429 || r.status_code === 429) {
       return Promise.reject(Error('Max limit reached'));
     }
-    else if (j.error) {
+
+    let j;
+    // TEXT
+    if (base.includes('www.proxy-list.download')) {
+      j = await r.text().then(content => {
+        const list = content.split('\n').filter(a => a);
+        const random = Math.floor(Math.random() * list.length);
+        const [ip, port] = list[random].split(':');
+
+        return {
+          ip,
+          port: parseInt(port),
+          protocol: args.type
+        };
+      });
+    }
+    else {
+      j = await r.json();
+    }
+    if (base.includes('proxylist.geonode.com')) {
+      const random = Math.floor(Math.random() * j.data.length);
+      j = j.data[random];
+      j.protocol = j.protocols[0];
+    }
+    else if (base.includes('pubproxy.com')) {
+      const random = Math.floor(Math.random() * j.data.length);
+      j = j.data[random];
+      j.protocol = j.type;
+    }
+    else if (base.includes('jetkai/proxy-list')) {
+      let protocol = 'socks5';
+      if (args.protocol === 'socks4' || args.protocol === 'socks4a') {
+        protocol = 'socks4';
+      }
+      else if (args.protocol === 'http') {
+        protocol = 'http';
+      }
+      j = j[protocol];
+      const random = Math.floor(Math.random() * j.length);
+      const [ip, port] = j[random].split(':');
+
+      j = {
+        ip,
+        port,
+        protocol
+      };
+    }
+    else if (base.includes('scidam/proxy-list')) {
+      j = j.proxies;
+      const random = Math.floor(Math.random() * j.length);
+      const proxy = j[random];
+      j = {
+        ip: proxy.ip,
+        port: proxy.port,
+        protocol: 'socks5'
+      };
+    }
+
+    if (j.error) {
       return Promise.reject(j.error);
     }
     else if (j.status_message) {
@@ -26,18 +79,18 @@ api.fetch = (base, args = {}) => {
     else {
       return Promise.reject(Error('Cannot connect to the server'));
     }
-  }));
+  });
 };
 
 api.convert = json => {
-  const {ip, port, protocol, country, anonymity, downloadSpeed} = json;
+  const {ip, port, protocol} = json;
   const proxy = {
     host: ip,
     port: Number(port),
     scheme: protocol
   };
   return {
-    info: {ip, port, protocol, country, anonymity, downloadSpeed},
+    info: {ip, port, protocol},
     proxy: {
       value: {
         mode: 'fixed_servers',

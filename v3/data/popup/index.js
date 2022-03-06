@@ -29,17 +29,20 @@ log.cache = [];
 document.addEventListener('DOMContentLoaded', () => chrome.storage.local.get({
   server: '0',
   servers: [
-    'https://gimmeproxy.com/api/getProxy',
-    'https://api.getproxylist.com/proxy'
+    'http://pubproxy.com/api/proxy',
+    'https://api.getproxylist.com/proxy',
+    'https://www.proxy-list.download/api/v1/get',
+    'https://proxylist.geonode.com/api/proxy-list',
+    'https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/json/proxies.json',
+    'https://raw.githubusercontent.com/scidam/proxy-list/master/proxy.json'
   ]
 }, prefs => {
   const select = document.getElementById('server');
   prefs.servers.forEach((server, index) => {
-    const option = new Option(
-      (new URL(server)).hostname,
-      index,
-      Number(prefs.server) === index
-    );
+    const o = new URL(server);
+    const name = o.hostname + ' -> ' + o.pathname.split('/')[1];
+
+    const option = new Option(name, index, Number(prefs.server) === index);
     select.options[select.options.length] = option;
   });
   window.setTimeout(() => select.value = prefs.server, 100);

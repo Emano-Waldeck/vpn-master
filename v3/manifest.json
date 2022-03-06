@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "name": "VPN Master - Free HTTP and SOCKS Proxies",
   "description": "__MSG_description__",
   "default_locale": "en",
@@ -18,9 +18,13 @@
     "proxy"
   ],
   "host_permissions": [
-    "https://gimmeproxy.com/api/getProxy",
+    "http://pubproxy.com/api/proxy",
     "https://api.getproxylist.com/proxy",
-    "http://checkip.dyndns.org/"
+    "http://checkip.dyndns.org/",
+    "https://www.proxy-list.download/api/v1/get",
+    "https://proxylist.geonode.com/api/proxy-list",
+    "https://raw.githubusercontent.com/jetkai/proxy-list/main/online-proxies/json/proxies.json",
+    "https://raw.githubusercontent.com/scidam/proxy-list/master/proxy.json"
   ],
   "homepage_url": "https://add0n.com/network-master.html",
   "background": {
