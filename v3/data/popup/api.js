@@ -9,6 +9,9 @@ api.fetch = (base, args = {}) => {
     if (r.status === 403 || r.status === 429 || r.status_code === 429) {
       return Promise.reject(Error('Max limit reached'));
     }
+    if (r.ok === false) {
+      return Promise.reject(Error('Server is down'));
+    }
 
     let j;
     // TEXT
@@ -105,28 +108,32 @@ api.convert = json => {
 };
 
 api.ping = http => new Promise((resolve, reject) => {
-  const timer = setTimeout(reject, 15000, 'timeout');
-  const headers = new Headers();
-  headers.append('pragma', 'no-cache');
-  headers.append('cache-control', 'no-cache');
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15000);
 
   fetch(http, {
     method: 'GET',
-    headers
+    signal: controller.signal,
+    headers: {
+      'pragma': 'no-cache',
+      'cache-control': 'no-cache'
+    }
   }).then(r => (r.ok ? r.text().then(content => {
     const ip = /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/
       .exec(content) || /((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/.exec(content);
     if (ip) {
       resolve(ip[0]);
     }
-    resolve(content);
+    else {
+      reject(Error('cannot extract IP address'));
+    }
   }) : reject(Error('server error'))), reject).finally(() => clearTimeout(timer));
 });
 api.verify = proxy => new Promise((resolve, reject) => {
-  const next = () => Promise.all([
-    api.ping('http://checkip.dyndns.org/').then(resolve, () => false),
-    api.ping('http://checkip.dyndns.org/').then(resolve, () => false)
-  ]).then(() => reject(Error('Ping Failed')));
+  const next = () => Promise.any([
+    api.ping('http://checkip.dyndns.org/'),
+    api.ping('http://checkip.dyndns.org/')
+  ]).then(resolve, reject);
 
   if (proxy) {
     chrome.proxy.settings.set(proxy, next);
@@ -136,17 +143,11 @@ api.verify = proxy => new Promise((resolve, reject) => {
   }
 });
 
-
 const icon = {};
 icon.set = (id = '/') => {
   const path = {
     '16': '/data/icons' + id + '16.png',
-    '18': '/data/icons' + id + '18.png',
-    '19': '/data/icons' + id + '19.png',
-    '32': '/data/icons' + id + '32.png',
-    '36': '/data/icons' + id + '36.png',
-    '38': '/data/icons' + id + '38.png',
-    '48': '/data/icons' + id + '48.png'
+    '32': '/data/icons' + id + '32.png'
   };
   chrome.action.setIcon({path});
 };

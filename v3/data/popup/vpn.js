@@ -206,7 +206,7 @@ vpn.search = async (max = 4) => {
     catch (e) {
       if (vpn.status === 'searching') {
         log('API Server: ' + e, 'warning');
-        if (e.message === 'Max limit reached') {
+        if (e.message === 'Max limit reached' || e.message === 'Server is down') {
           prefs.server = (prefs.server + 1) % prefs.servers.length;
           i = 0;
           log('Switching to ' + prefs.servers[prefs.server]);
