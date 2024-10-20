@@ -1,7 +1,6 @@
 /* global vpn */
 'use strict';
 
-const isFirefox = /Firefox/.test(navigator.userAgent) || typeof InstallTrigger !== 'undefined';
 const power = document.getElementById('power');
 
 const log = (msg, c = '', bypass = false, ignore = false) => {
@@ -18,6 +17,10 @@ const log = (msg, c = '', bypass = false, ignore = false) => {
   }
 
   log.cache.push([msg, c]);
+  if (log.cache.length > 50) {
+    log.cache.shift();
+  }
+
   if (bypass === false) {
     chrome.storage.local.set({
       logs: log.cache
@@ -74,6 +77,8 @@ chrome.storage.local.get({
 
   // do I have the control?
   chrome.proxy.settings.get({}, ({levelOfControl, value}) => {
+    console.log(levelOfControl, value);
+
     // get the current state
     if (levelOfControl === 'controlled_by_this_extension') {
       if (value.mode === 'fixed_servers') {
@@ -99,18 +104,14 @@ chrome.storage.local.get({
       const https = value.rules.proxyForFtp;
       log(`Proxy for HTTPS [${https.scheme}] ${https.host}:${[https.port]}`, '', true, true);
     }
-    if (levelOfControl !== 'controlled_by_this_extension' && levelOfControl !== 'controllable_by_this_extension') {
-      log('No control over proxy configuration; ' + levelOfControl, 'important', true, true);
+    console.log(levelOfControl);
+    if (
+      levelOfControl &&
+      (levelOfControl !== 'controlled_by_this_extension' && levelOfControl !== 'controllable_by_this_extension')
+    ) {
+      const msg = 'This extension cannot configure proxy settings because those are managed by a different extension';
+      log(msg + '; ' + levelOfControl, 'important', true, true);
       document.body.dataset.status = 'not-available';
-    }
-    else {
-      if (isFirefox) {
-        chrome.extension.isAllowedIncognitoAccess(s => {
-          if (s === false) {
-            log('Enable "Run in Private Windows" from Add-ons Manager and retry', 'important', true, true);
-          }
-        });
-      }
     }
   });
 });
